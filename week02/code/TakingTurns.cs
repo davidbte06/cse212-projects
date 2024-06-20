@@ -85,4 +85,69 @@
         players.GetNextPerson();
         // Defect(s) Found:
     }
+    public class TakingTurnsQueue
+    {
+        private Queue<Person> queue;
+
+        public TakingTurnsQueue()
+        {
+            queue = new Queue<Person>();
+        }
+
+        public void AddPerson(string name, int turns)
+        {
+            queue.Enqueue(new Person(name, turns));
+        }
+
+        public void GetNextPerson()
+    {
+        if (queue.Count == 0)
+        {
+            Console.WriteLine("Error: Queue is empty.");
+            return;
+        }
+
+        Person currentPerson = queue.Dequeue();
+        Console.WriteLine(currentPerson.Name);
+
+        if (currentPerson.HasTurnsLeft())
+        {
+            currentPerson.DecreaseTurn();
+            if (currentPerson.HasTurnsLeft())
+                queue.Enqueue(currentPerson);
+        }
+        else if (!currentPerson.HasTurnsLeft())
+        {
+            queue.Enqueue(currentPerson);
+        }
+    }
+
+        public int Length
+        {
+            get { return queue.Count; }
+        }
+
+        private class Person
+        {
+            public string Name { get; private set; }
+            private int turns;
+
+            public Person(string name, int turns)
+            {
+                Name = name;
+                this.turns = turns;
+            }
+
+            public bool HasTurnsLeft()
+            {
+                return turns != 0;
+            }
+
+            public void DecreaseTurn()
+            {
+                if (turns > 0)
+                    turns--;
+            }
+        }
+    }
 }
