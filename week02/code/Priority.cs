@@ -1,6 +1,5 @@
 ﻿public static class Priority {
-    public static void Test()
-    {
+    public static void Test() {
         // Test Case 1
         // Scenario: Enqueue items with different priorities and dequeue them.
         // Expected Result: Items dequeued in order of highest priority.
@@ -34,7 +33,11 @@
         // Scenario: Dequeue from an empty queue.
         // Expected Result: Error message should be displayed.
         Console.WriteLine("Test Case 3");
-        Console.WriteLine(priorityQueue.Dequeue());  // Expected: Error: Queue is empty.
+        try {
+            Console.WriteLine(priorityQueue.Dequeue());  // Expected: Exception: Queue is empty.
+        } catch (InvalidOperationException ex) {
+            Console.WriteLine(ex.Message);
+        }
 
         Console.WriteLine("---------");
 
@@ -67,15 +70,13 @@
         {
             if (queue.Count == 0)
             {
-                Console.WriteLine("Error: Queue is empty.");
-                return default(T); // Return default value of type T (usually null for reference types)
+                throw new InvalidOperationException("Queue is empty."); // Better exception handling
             }
 
             int highestPriorityIndex = 0;
             for (int i = 1; i < queue.Count; i++)
             {
-                if (queue[i].priority > queue[highestPriorityIndex].priority ||
-                    (queue[i].priority == queue[highestPriorityIndex].priority && i < highestPriorityIndex))
+                if (queue[i].priority > queue[highestPriorityIndex].priority)
                 {
                     highestPriorityIndex = i;
                 }

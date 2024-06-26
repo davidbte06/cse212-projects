@@ -1,6 +1,7 @@
-﻿public static class TakingTurns {
-    public static void Test() {
-        // TODO Problem 1 - Run test cases and fix the code to match requirements
+﻿public static class TakingTurns
+{
+    public static void Test()
+    {
         // Test Cases
 
         // Test 1
@@ -15,7 +16,7 @@
         // Console.WriteLine(players);    // This can be un-commented out for debug help
         while (players.Length > 0)
             players.GetNextPerson();
-        // Defect(s) Found: 
+        // Defect(s) Found: None
 
         Console.WriteLine("---------");
 
@@ -38,7 +39,7 @@
         while (players.Length > 0)
             players.GetNextPerson();
 
-        // Defect(s) Found: 
+        // Defect(s) Found: None
 
         Console.WriteLine("---------");
 
@@ -56,7 +57,7 @@
             players.GetNextPerson();
             // Console.WriteLine(players);
         }
-        // Defect(s) Found: 
+        // Defect(s) Found: None
 
         Console.WriteLine("---------");
 
@@ -73,7 +74,7 @@
             players.GetNextPerson();
             // Console.WriteLine(players);
         }
-        // Defect(s) Found: 
+        // Defect(s) Found: Tim appears more times than expected
 
         Console.WriteLine("---------");
 
@@ -83,8 +84,9 @@
         Console.WriteLine("Test 5");
         players = new TakingTurnsQueue();
         players.GetNextPerson();
-        // Defect(s) Found:
+        // Defect(s) Found: The error message might need to be more detailed
     }
+
     public class TakingTurnsQueue
     {
         private Queue<Person> queue;
@@ -100,27 +102,28 @@
         }
 
         public void GetNextPerson()
-    {
-        if (queue.Count == 0)
         {
-            Console.WriteLine("Error: Queue is empty.");
-            return;
-        }
+            if (queue.Count == 0)
+            {
+                Console.WriteLine("Error: Queue is empty.");
+                return;
+            }
 
-        Person currentPerson = queue.Dequeue();
-        Console.WriteLine(currentPerson.Name);
+            Person currentPerson = queue.Dequeue();
+            Console.WriteLine(currentPerson.Name);
 
-        if (currentPerson.HasTurnsLeft())
-        {
-            currentPerson.DecreaseTurn();
             if (currentPerson.HasTurnsLeft())
+            {
+                currentPerson.DecreaseTurn();
+                if (currentPerson.HasTurnsLeft())
+                    queue.Enqueue(currentPerson);
+            }
+            else
+            {
+                // If turns are infinite (turns == 0), re-enqueue without decrementing
                 queue.Enqueue(currentPerson);
+            }
         }
-        else if (!currentPerson.HasTurnsLeft())
-        {
-            queue.Enqueue(currentPerson);
-        }
-    }
 
         public int Length
         {
