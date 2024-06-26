@@ -37,7 +37,7 @@ public static class SetsAndMapsTester {
         // [5th-6th, 333], [10th, 933], [1st-4th, 168], [Preschool, 51], [12th, 433]}
 
         // Problem 3: Anagrams
-        // Sample Test Cases (may not be comprehensive) 
+        // Sample Test Cases (may not be comprehensive)
         Console.WriteLine("\n=========== Anagram TESTS ===========");
         Console.WriteLine(IsAnagram("CAT", "ACT")); // true
         Console.WriteLine(IsAnagram("DOG", "GOOD")); // false
@@ -76,7 +76,7 @@ public static class SetsAndMapsTester {
         maze.ShowStatus(); // Should be at (6,6)
 
         // Problem 5: Earthquake
-        // Sample Test Cases (may not be comprehensive) 
+        // Sample Test Cases (may not be comprehensive)
         Console.WriteLine("\n=========== Earthquake TESTS ===========");
         EarthquakeDailySummary();
 
@@ -90,9 +90,9 @@ public static class SetsAndMapsTester {
     }
 
     /// <summary>
-    /// The words parameter contains a list of two character 
-    /// words (lower case, no duplicates). Using sets, find an O(n) 
-    /// solution for displaying all symmetric pairs of words.  
+    /// The words parameter contains a list of two character
+    /// words (lower case, no duplicates). Using sets, find an O(n)
+    /// solution for displaying all symmetric pairs of words.
     ///
     /// For example, if <c>words</c> was: <c>[am, at, ma, if, fi]</c>, we would display:
     /// <code>
@@ -107,11 +107,20 @@ public static class SetsAndMapsTester {
     /// that there were no duplicates) and therefore should not be displayed.
     /// </summary>
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
-    private static void DisplayPairs(string[] words) {
-        // To display the pair correctly use something like:
-        // Console.WriteLine($"{word} & {pair}");
-        // Each pair of words should displayed on its own line.
+   private static void DisplayPairs(string[] words) {
+    var wordSet = new HashSet<string>();
+
+    foreach (var word in words) {
+        var reversedWord = new string(word.Reverse().ToArray());
+
+        if (wordSet.Contains(reversedWord)) {
+            Console.WriteLine($"{word} & {reversedWord}");
+        } else {
+            wordSet.Add(word);
+        }
     }
+}
+
 
     /// <summary>
     /// Read a census file and summarize the degrees (education)
@@ -128,14 +137,20 @@ public static class SetsAndMapsTester {
     /// # Problem 2 #
     /// #############
     private static Dictionary<string, int> SummarizeDegrees(string filename) {
-        var degrees = new Dictionary<string, int>();
-        foreach (var line in File.ReadLines(filename)) {
-            var fields = line.Split(",");
-            // Todo Problem 2 - ADD YOUR CODE HERE
+    var degrees = new Dictionary<string, int>();
+    foreach (var line in File.ReadLines(filename)) {
+        var fields = line.Split(",");
+        if (fields.Length >= 4) {
+            var degree = fields[3].Trim(); // Extract the degree (4th column)
+            if (degrees.ContainsKey(degree)) {
+                degrees[degree]++;
+            } else {
+                degrees[degree] = 1;
+            }
         }
-
-        return degrees;
     }
+    return degrees;
+}
 
     /// <summary>
     /// Determine if 'word1' and 'word2' are anagrams.  An anagram
@@ -157,9 +172,31 @@ public static class SetsAndMapsTester {
     /// # Problem 3 #
     /// #############
     private static bool IsAnagram(string word1, string word2) {
-        // Todo Problem 3 - ADD YOUR CODE HERE
-        return false;
+    // Normalize the words: remove spaces and convert to lowercase
+    string normalizedWord1 = new string(word1.Where(char.IsLetterOrDigit).ToArray()).ToLower();
+    string normalizedWord2 = new string(word2.Where(char.IsLetterOrDigit).ToArray()).ToLower();
+
+    // Function to count the occurrences of each character in a word
+    Dictionary<char, int> GetCharacterCount(string word) {
+        var charCount = new Dictionary<char, int>();
+        foreach (char c in word) {
+            if (charCount.ContainsKey(c)) {
+                charCount[c]++;
+            } else {
+                charCount[c] = 1;
+            }
+        }
+        return charCount;
     }
+
+    // Get character counts for both words
+    var charCount1 = GetCharacterCount(normalizedWord1);
+    var charCount2 = GetCharacterCount(normalizedWord2);
+
+    // Compare the two dictionaries
+    return charCount1.Count == charCount2.Count && !charCount1.Except(charCount2).Any();
+}
+
 
     /// <summary>
     /// Sets up the maze dictionary for problem 4
