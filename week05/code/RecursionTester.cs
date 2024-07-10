@@ -3,12 +3,12 @@ public static class RecursionTester {
     /// Entry point for the Prove 8 tests
     /// </summary>
     public static void Run() {
-        // Sample Test Cases (may not be comprehensive) 
+        // Sample Test Cases (may not be comprehensive)
         Console.WriteLine("\n=========== PROBLEM 1 TESTS ===========");
         Console.WriteLine(SumSquaresRecursive(10)); // 385
         Console.WriteLine(SumSquaresRecursive(100)); // 338350
 
-        // Sample Test Cases (may not be comprehensive) 
+        // Sample Test Cases (may not be comprehensive)
         Console.WriteLine("\n=========== PROBLEM 2 TESTS ===========");
         PermutationsChoose("ABCD", 3);
         // Expected Result (order may be different):
@@ -67,7 +67,7 @@ public static class RecursionTester {
         Console.WriteLine(CountWaysToClimb(20)); // 121415
         // Uncomment out the test below after implementing memoization.  It won't work without it.
         // TODO Problem 3
-        // Console.WriteLine(CountWaysToClimb(100));  // 180396380815100901214157639
+        Console.WriteLine(CountWaysToClimb(100));  // 180396380815100901214157639
 
         // Sample Test Cases (may not be comprehensive) 
         Console.WriteLine("\n=========== PROBLEM 4 TESTS ===========");
@@ -77,8 +77,8 @@ public static class RecursionTester {
         // 110100
         // 110101
         WildcardBinary("***");
-        // 000   
-        // 001   
+        // 000
+        // 001
         // 010
         // 011
         // 100
@@ -147,7 +147,10 @@ public static class RecursionTester {
     /// </summary>
     public static int SumSquaresRecursive(int n) {
         // TODO Start Problem 1
+        if (n <= 0) {
         return 0;
+    }
+    return n * n + SumSquaresRecursive(n - 1);
     }
 
     /// <summary>
@@ -171,19 +174,31 @@ public static class RecursionTester {
     /// </summary>
     public static void PermutationsChoose(string letters, int size, string word = "") {
         // TODO Start Problem 2
+        if (word.Length == size) {
+        Console.WriteLine(word);
+        return;
+    }
+    for (int i = 0; i < letters.Length; i++) {
+        // Choose the current letter
+        char currentLetter = letters[i];
+        // Form the new list of letters without the current letter
+        string remainingLetters = letters.Substring(0, i) + letters.Substring(i + 1);
+        // Recur with the new letter added to the word
+        PermutationsChoose(remainingLetters, size, word + currentLetter);
+    }
     }
 
     /// <summary>
     /// #############
     /// # Problem 3 #
     /// #############
-    /// Imagine that there was a staircase with 's' stairs.  
-    /// We want to count how many ways there are to climb 
-    /// the stairs.  If the person could only climb one 
-    /// stair at a time, then the total would be just one.  
-    /// However, if the person could choose to climb either 
-    /// one, two, or three stairs at a time (in any order), 
-    /// then the total possibilities become much more 
+    /// Imagine that there was a staircase with 's' stairs.
+    /// We want to count how many ways there are to climb
+    /// the stairs.  If the person could only climb one
+    /// stair at a time, then the total would be just one.
+    /// However, if the person could choose to climb either
+    /// one, two, or three stairs at a time (in any order),
+    /// then the total possibilities become much more
     /// complicated.  If there were just three stairs,
     /// the possible ways to climb would be four as follows:
     ///
@@ -195,60 +210,89 @@ public static class RecursionTester {
     /// With just one step to go, the ways to get
     /// to the top of 's' stairs is to either:
     ///
-    /// - take a single step from the second to last step, 
-    /// - take a double step from the third to last step, 
+    /// - take a single step from the second to last step,
+    /// - take a double step from the third to last step,
     /// - take a triple step from the fourth to last step
     ///
-    /// We don't need to think about scenarios like taking two 
+    /// We don't need to think about scenarios like taking two
     /// single steps from the third to last step because this
     /// is already part of the first scenario (taking a single
     /// step from the second to last step).
     ///
     /// These final leaps give us a sum:
     ///
-    /// CountWaysToClimb(s) = CountWaysToClimb(s-1) + 
+    /// CountWaysToClimb(s) = CountWaysToClimb(s-1) +
     ///                       CountWaysToClimb(s-2) +
     ///                       CountWaysToClimb(s-3)
     ///
     /// To run this function for larger values of 's', you will need
     /// to update this function to use memoization.  The parameter
-    /// 'remember' has already been added as an input parameter to 
+    /// 'remember' has already been added as an input parameter to
     /// the function for you to complete this task.
     ///
     /// The last test case is commented out because it will not work
     /// until the memoization is implemented.
     /// </summary>
     public static decimal CountWaysToClimb(int s, Dictionary<int, decimal>? remember = null) {
-        // Base Cases
-        if (s == 0)
-            return 0;
-        if (s == 1)
-            return 1;
-        if (s == 2)
-            return 2;
-        if (s == 3)
-            return 4;
+         // Initialize the memoization dictionary if it is null
+    if (remember == null) {
+        remember = new Dictionary<int, decimal>();
+    }
 
-        // Solve using recursion
-        decimal ways = CountWaysToClimb(s - 1) + CountWaysToClimb(s - 2) + CountWaysToClimb(s - 3);
-        return ways;
+    // Base Cases
+    if (s == 0)
+        return 0;
+    if (s == 1)
+        return 1;
+    if (s == 2)
+        return 2;
+    if (s == 3)
+        return 4;
+
+    // Check if the result is already computed and stored in the dictionary
+    if (remember.ContainsKey(s)) {
+        return remember[s];
+    }
+
+    // Solve using recursion with memoization
+    decimal ways = CountWaysToClimb(s - 1, remember) + CountWaysToClimb(s - 2, remember) + CountWaysToClimb(s - 3, remember);
+
+    // Store the result in the dictionary
+    remember[s] = ways;
+
+    return ways;
     }
 
     /// <summary>
     /// #############
     /// # Problem 4 #
     /// #############
-    /// A binary string is a string consisting of just 1's and 0's.  For example, 1010111 is 
-    /// a binary string.  If we introduce a wildcard symbol * into the string, we can say that 
-    /// this is now a pattern for multiple binary strings.  For example, 101*1 could be used 
-    /// to represent 10101 and 10111.  A pattern can have more than one * wildcard.  For example, 
+    /// A binary string is a string consisting of just 1's and 0's.  For example, 1010111 is
+    /// a binary string.  If we introduce a wildcard symbol * into the string, we can say that
+    /// this is now a pattern for multiple binary strings.  For example, 101*1 could be used
+    /// to represent 10101 and 10111.  A pattern can have more than one * wildcard.  For example,
     /// 1**1 would result in 4 different binary strings: 1001, 1011, 1101, and 1111.
-    ///	
-    /// Using recursion, display all possible binary strings for a given pattern.  You might find 
+    ///
+    /// Using recursion, display all possible binary strings for a given pattern.  You might find
     /// some of the string functions like IndexOf and [..X] / [X..] to be useful in solving this problem.
     /// </summary>
     public static void WildcardBinary(string pattern) {
         // TODO Start Problem 4
+        // Base Case: If there are no wildcards, print the pattern
+    if (!pattern.Contains('*')) {
+        Console.WriteLine(pattern);
+        return;
+    }
+
+    // Recursive Case: Find the first occurrence of the wildcard
+    int index = pattern.IndexOf('*');
+
+    // Replace the wildcard with '0' and '1' and recursively solve for each new pattern
+    string patternWithZero = pattern.Substring(0, index) + '0' + pattern.Substring(index + 1);
+    string patternWithOne = pattern.Substring(0, index) + '1' + pattern.Substring(index + 1);
+
+    WildcardBinary(patternWithZero);
+    WildcardBinary(patternWithOne);
     }
 
     /// <summary>
